@@ -1,11 +1,12 @@
 public class Circle {
-    float x, y, radius;
+    float x, y, radius, mass;
     float velx, vely;
     
-    public Circle(float x, float y, float radius) {
+    public Circle(float x, float y, float radius, float mass) {
         this.x = x;
         this.y = y;
         this.radius = radius;
+        this.mass = mass;
         this.velx = 10;
         this.vely = 10;
     }
@@ -30,6 +31,6 @@ public class Circle {
     }
     
     public boolean checkTouch(Circle other) {
-        return (sqrt());
+        return (sqrt(pow(this.x - other.x, 2) + pow(this.y - other.y, 2)) < this.radius + other.radius);
     }
 }
