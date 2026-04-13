@@ -2,7 +2,7 @@ static Circle c;
 
 void setup() {
     surface.setResizable(true);
-    c = new Circle(20, 20, 10);
+    c = new Circle(20, 20, 10, 1);
 }
 
 void draw() {
