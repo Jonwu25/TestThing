@@ -15,6 +15,10 @@ public class Vector{
         }
     }
     
+    public Vector deepCopy() {
+        return new Vector(x, y, 0);
+    }
+    
     public float[] standard() {
         return new float[]{this.x, this.y};
     }
