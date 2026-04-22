@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Circle {
     float x, y, radius, mass;
+    ArrayList<float[]> positions;
     Vector vel;
     
     public Circle(float x, float y, float radius, float mass, float vx, float vy, int mode) {
@@ -9,6 +10,7 @@ public class Circle {
         this.y = y;
         this.radius = radius;
         this.mass = mass;
+        positions = new ArrayList<float[]>();
         vel = new Vector(vx, vy, mode);
     }
     
@@ -18,9 +20,12 @@ public class Circle {
     }
     
     public void update() {
+        positions.add(new float[]{x, y});
+        if (positions.size() > 100) {
+            positions.remove(0);
+        }
         x+=vel.x;
         y+=vel.y;
-        vel.y += 0.1;
     }
     
     public void display() {
@@ -28,6 +33,10 @@ public class Circle {
         circle(x, y, radius);
         stroke(127);
         line(x, y, x+10*vel.x, y+10*vel.y);
+        for (int i = 0; i < positions.size() - 1; i++) {
+            stroke(128 + 127 * i / positions.size());
+            line(positions.get(i)[0], positions.get(i)[1], positions.get(i+1)[0], positions.get(i+1)[1]);
+        }
         stroke(255);
     }
     
