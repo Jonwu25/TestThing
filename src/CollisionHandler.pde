@@ -69,7 +69,7 @@ public class CollisionHandler {
 
     public void update() {
         for (Circle c : circles) {
-            c.update();
+            c.update(circles);
         }
     }
 
