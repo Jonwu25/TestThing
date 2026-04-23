@@ -5,7 +5,11 @@ public class Vector{
             this.x = x;
             this.y = y;
             this.size = sqrt(pow(x, 2) + pow(y, 2));
-            this.direction = atan2(y, x);
+            if (x == 0 && y == 0) {
+                this.direction = 0;
+            } else {
+                this.direction = atan2(y, x);
+            }
         }
         if (mode == 1) {
             this.size = x;

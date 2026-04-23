@@ -19,7 +19,7 @@ public class Circle {
         return d;
     }
     
-    public void update(ArrayLis<Circle> circles) {
+    public void update(ArrayList<Circle> circles) {
         positions.add(new float[]{x, y});
         if (positions.size() > 100) {
             positions.remove(0);
@@ -27,9 +27,15 @@ public class Circle {
         x+=vel.x;
         y+=vel.y;
         for (Circle c : circles) {
-            Vector v = new Vector(c.x - x, c.y - y, 0);
-            vel = vel.add(v.multiply(1/v.size^3).multiply(10*c.mass));
+            if (!samePos(c)) {
+                Vector v = new Vector(c.x - x, c.y - y, 0);
+                vel = vel.add(v.multiply(pow(v.size, -3)).multiply(50*c.mass));
+            }
         }
+    }
+    
+    public boolean samePos(Circle other) {
+        return (x==other.x)&&(y==other.y);
     }
     
     public void display() {

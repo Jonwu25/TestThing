@@ -1,10 +1,12 @@
+import processing.javafx.*;
+
 import java.util.*;
 
 static CollisionHandler c;
 
 void setup() {
+    size(1000, 1000, FX2D);
     surface.setResizable(true);
-    size(1000, 1000);
     //frameRate(4);
     Circle a = new Circle(20f, 20f, 10f, 1f, 1f, 1f, 0);
     Circle b = new Circle(50f, 20f, 10f, 1f, 0f, 0.5f, 0);
@@ -16,9 +18,9 @@ void setup() {
     circles.add(a);
     circles.add(b);
     circles.add(d);
-    circles.add(e);
-    circles.add(f);
-    circles.add(g);
+    //circles.add(e);
+    //circles.add(f);
+    //circles.add(g);
     c = new CollisionHandler(circles);
 }
 
@@ -27,12 +29,5 @@ void draw() {
     c.display();
     c.update();
     c.handleCollisions();
-
-    /*if (circles.get(0).checkTouch(circles.get(1)) != circles.get(1).checkTouch(circles.get(0))) {
-        System.out.println(":(");
-    }
-
-    textAlign(LEFT, TOP);
-    text(circles.get(0).checkTouch(circles.get(1)) ? "true" : "false", 0, 0);
-    text(circles.get(1).checkTouch(circles.get(0)) ? "true" : "false", 0, 10);*/
+    
 }

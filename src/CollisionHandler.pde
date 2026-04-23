@@ -42,18 +42,24 @@ public class CollisionHandler {
                     Circle first = circles.get(i);
                     Circle second = circles.get(j);
                     
-                    v = finalVel.multiply(first.mass);
-                    v = v.add(second.vel.multiply(second.mass));
-                    v = v.multiply(1/(first.mass+second.mass));
-                    w = finalVel.subtract(v);
-                    w = w.reflect(new Vector(second.x - first.x, second.y - first.y, 0));
-                    w = w.add(v);
-                    finalVel = w;
-                    
-                    Vector dist = new Vector(second.x - first.x, second.y - first.y, 0);
-                    dist = new Vector(first.radius + second.radius - dist.size, dist.direction, 1);
-                    dx += -1*dist.multiply(first.mass/(first.mass+second.mass)).x;
-                    dy += -1*dist.multiply(first.mass/(first.mass+second.mass)).y;
+                    if (!first.samePos(second)) {
+                        v = finalVel.multiply(first.mass);
+                        v = v.add(second.vel.multiply(second.mass));
+                        v = v.multiply(1/(first.mass+second.mass));
+                        w = finalVel.subtract(v);
+                        w = w.reflect(new Vector(second.x - first.x, second.y - first.y, 0));
+                        w = w.add(v);
+                        finalVel = w;
+                        
+                        Vector dist = new Vector(second.x - first.x, second.y - first.y, 0);
+                        dist = new Vector(first.radius + second.radius - dist.size, dist.direction, 1);
+                        dx += -1*dist.multiply(first.mass/(first.mass+second.mass)).x;
+                        dy += -1*dist.multiply(first.mass/(first.mass+second.mass)).y;
+                    } else {
+                        Vector dist = new Vector(first.radius + second.radius, 0, 1);
+                        dx += -1*dist.multiply(first.mass/(first.mass+second.mass)).x;
+                        dy += -1*dist.multiply(first.mass/(first.mass+second.mass)).y;
+                    }
                 }
             }
             newVel.add(finalVel);
