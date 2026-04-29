@@ -11,47 +11,39 @@ public class Polygon {
     }
     
     public ArrayList<float[]> intersections(Polygon other) {
+        // From O'Rourke
         int startOne = 0;
         int startTwo = 0;
         ArrayList<float[]> intersections;
         for (int i = 0; i < vertices.length + other.vertices.length; i++) {
             if (checkIntersect(vertices[startOne], vertices[(startOne+1)%vertices.length],
                                other.vertices[startTwo], other.vertices[(startOne+1)%other.vertices.length])) {
-                
+                float[] intersectionPoint = intersection(vertices[startOne], vertices[(startOne+1)%vertices.length],
+                                                         other.vertices[startTwo], other.vertices[(startOne+1)%other.vertices.length]);
+                if (intersections.size() > 0) {
+                    if (intersections.get(0)[0] == intersectionPoint[0] && intersections.get(0)[1] == intersectionPoint[1]) {
+                        break;
+                    }
+                }
+                intersections.add(intersectionPoint);
             }
         }
         return null;
     }
     
     public boolean checkIntersect(float[] startOne, float[] endOne, float[] startTwo, float[] endTwo) {
-        int o1 = orientation(startOne, endOne, startTwo);
-        int o2 = orientation(startOne, endOne, endTwo);
-        int o3 = orientation(startTwo, endTwo, startOne);
-        int o4 = orientation(startTwo, endTwo, startTwo);
-
-        if (o1 != o2 && o3 != o4)
+        if(onSegment(intersection(startONe, endOne, startTwo, endTwo), startOne, endOne) && onSegment(intersection(startONe, endOne, startTwo, endTwo), startTwo, endTwo)){
             return true;
-
-        if (o1 == 0 &&
-        onSegment(startOne, startTwo, endOne)) return true;
-
-        if (o2 == 0 &&
-        onSegment(startOne, endTwo, endOne)) return true;
-
-        if (o3 == 0 &&
-        onSegment(startTwo, startOne, endTwo)) return true;
-
-        if (o4 == 0 &&
-        onSegment(startTwo, endOne, endTwo)) return true;
-
+        }
         return false;
     }
-    
-    public int orientation(float[] p, float[] q, float[] r) {
-        float val = (q[1] - p[1]) * (r[0] - q[0]) -
-                  (q[0] - p[0]) * (r[1] - q[1]);
-        if(val == 0) return 0;
-        return (val > 0) ? 1 : -1;
+
+    public float[] intersection(float[] p, float[] q, float[] r, float[] s) {'
+        // y=(q[1]-p[1])/(q[0]-p[0])(x-p[0])+p[1]
+        // y=(s[1]-r[1])/(s[0]-r[0])(x-r[0])+r[1]
+        float x = (r[1]-p[1]+(q[1]-p[1])/(q[0]-p[0])*p[0]-(s[1]-r[1])/(s[0]-r[0])*r[0])/((q[1]-p[1])/(q[0]-p[0])-(s[1]-r[1])/(s[0]-r[0]));
+        floay y = (q[1]-p[1])/(q[0]-p[0])*(x-p[0])+p[1];
+        return new float[]{x, y};
     }
     
     public boolean onSegment(float[] p, float[] start, float[] end) {
