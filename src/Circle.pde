@@ -29,7 +29,7 @@ public class Circle {
         for (Circle c : circles) {
             if (!samePos(c)) {
                 Vector v = new Vector(c.x - x, c.y - y, 0);
-                vel = vel.add(v.multiply(pow(v.size, -3)).multiply(50*c.mass));
+                vel = vel.add(v.multiply(pow(v.size, -3)).multiply(Main.G*c.mass));
             }
         }
     }

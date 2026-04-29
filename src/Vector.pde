@@ -46,7 +46,7 @@ public class Vector{
     public Vector reflect(Vector other) {
         // reflect by line perpendicular to other
         Vector v = new Vector(this.size, 2*other.direction - this.direction + PI, 1);
-        return v.multiply(1);
+        return v.multiply(0.9);
     }
     
     public void display(float x, float y) {
