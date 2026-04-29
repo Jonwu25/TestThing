@@ -32,7 +32,7 @@ public class Polygon {
     }
     
     public boolean checkIntersect(float[] startOne, float[] endOne, float[] startTwo, float[] endTwo) {
-        if(onSegment(intersection(startONe, endOne, startTwo, endTwo), startOne, endOne) && onSegment(intersection(startONe, endOne, startTwo, endTwo), startTwo, endTwo)){
+        if(onSegment(intersection(startOne, endOne, startTwo, endTwo), startOne, endOne) && onSegment(intersection(startOne, endOne, startTwo, endTwo), startTwo, endTwo)){
             return true;
         }
         return false;
