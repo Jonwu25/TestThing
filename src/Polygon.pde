@@ -38,7 +38,7 @@ public class Polygon {
         return false;
     }
 
-    public float[] intersection(float[] p, float[] q, float[] r, float[] s) {'
+    public float[] intersection(float[] p, float[] q, float[] r, float[] s) {
         // y=(q[1]-p[1])/(q[0]-p[0])(x-p[0])+p[1]
         // y=(s[1]-r[1])/(s[0]-r[0])(x-r[0])+r[1]
         float x = (r[1]-p[1]+(q[1]-p[1])/(q[0]-p[0])*p[0]-(s[1]-r[1])/(s[0]-r[0])*r[0])/((q[1]-p[1])/(q[0]-p[0])-(s[1]-r[1])/(s[0]-r[0]));
