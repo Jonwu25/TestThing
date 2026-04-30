@@ -30,6 +30,15 @@ public class Polygon {
         }
         return null;
     }
+
+    public boolean inside(float[] p) {
+        float angle = 0;
+        for (int i = 0; i < vertices.length; i++) {
+            Vector vec = new Vector(p, vertices[i]);
+            angle += vec.angle(new Vector(p, vertices[(i+1)%vertices.length]));
+        }
+        return angle==PI;
+    }
     
     public boolean checkIntersect(float[] startOne, float[] endOne, float[] startTwo, float[] endTwo) {
         if(onSegment(intersection(startOne, endOne, startTwo, endTwo), startOne, endOne) && onSegment(intersection(startOne, endOne, startTwo, endTwo), startTwo, endTwo)){
