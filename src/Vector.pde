@@ -52,4 +52,8 @@ public class Vector{
     public void display(float x, float y) {
         line(x, y, x+this.x, y+this.y);
     }
+
+    public float angle(Vector v) {
+        return (v.direction-direction+2*PI)%(2*PI);
+    }
 }
