@@ -18,6 +18,10 @@ public class Vector{
             this.y = x*sin(y);
         }
     }
+
+    public Vector(float[] s, float[] e) {
+        this = new Vector(e[0]-s[0], e[1]-s[1], 0);
+    }
     
     public Vector deepCopy() {
         return new Vector(x, y, 0);
