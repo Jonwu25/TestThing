@@ -15,7 +15,7 @@ public class Polygon {
         int startOne = 0;
         int startTwo = 0;
         ArrayList<float[]> intersections;
-        for (int i = 0; i < vertices.length + other.vertices.length; i++) {
+        for (int i = 0; i < 2*（vertices.length + other.vertices.length）; i++) {
             if (checkIntersect(vertices[startOne], vertices[(startOne+1)%vertices.length],
                                other.vertices[startTwo], other.vertices[(startOne+1)%other.vertices.length])) {
                 float[] intersectionPoint = intersection(vertices[startOne], vertices[(startOne+1)%vertices.length],
