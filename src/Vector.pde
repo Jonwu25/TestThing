@@ -20,7 +20,11 @@ public class Vector{
     }
 
     public Vector(float[] s, float[] e) {
-        this = new Vector(e[0]-s[0], e[1]-s[1], 0);
+        Vector t = new Vector(e[0]-s[0], e[1]-s[1], 0);
+        x = t.x;
+        y = t.y;
+        size = t.size;
+        direction = t.direction;
     }
     
     public Vector deepCopy() {
@@ -59,5 +63,9 @@ public class Vector{
 
     public float angle(Vector v) {
         return (v.direction-direction+2*PI)%(2*PI);
+    }
+
+    public float cross(Vector v) {
+        return this.x*v.y - this.y*v.x;
     }
 }

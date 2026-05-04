@@ -2,9 +2,12 @@ import java.util.*;
 
 public class CollisionHandler {
     ArrayList<Circle> circles;
+    ArrayList<Polygon> polygons;
+    float elasticity = 1f;
 
-    public CollisionHandler(ArrayList<Circle> circles) {
+    public CollisionHandler(ArrayList<Circle> circles, ArrayList<Polygon> polygons) {
         this.circles = circles;
+        this.polygons = polygons;
     }
 
     public void handleCollisions() {

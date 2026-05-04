@@ -3,6 +3,7 @@ import java.util.*;
 public class Circle {
     float x, y, radius, mass;
     ArrayList<float[]> positions;
+    boolean st = false;
     Vector vel;
     
     public Circle(float x, float y, float radius, float mass, float vx, float vy, int mode) {
@@ -36,6 +37,24 @@ public class Circle {
     
     public boolean samePos(Circle other) {
         return (x==other.x)&&(y==other.y);
+    }
+
+    public ArrayList<float[]> circleIntersection(Circle other) {
+        ArrayList<float[]> intersections = new ArrayList<>();
+        if (checkTouch(other)) {
+            float d = sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
+            float a = (pow(radius, 2) - pow(other.radius, 2) + pow(d, 2)) / (2*d);
+            float h = sqrt(pow(radius, 2) - pow(a, 2));
+            float x2 = x + a*(other.x - x)/d;
+            float y2 = y + a*(other.y - y)/d;
+            float rx = -(other.y - y) * (h/d);
+            float ry = -(other.x - x) * (h/d);
+            intersections.add(new float[]{x2 + rx, y2 - ry});
+            if (h != 0) {
+                intersections.add(new float[]{x2 - rx, y2 + ry});
+            }
+        }
+        return intersections;
     }
     
     public void display() {
