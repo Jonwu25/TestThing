@@ -4,6 +4,7 @@ public class Polygon {
     float[][] vertices, origVertices;
     float x, y, rot, vx, vy, vrot;
     boolean st = false;
+    boolean inv = false;
   
     public Polygon(float x, float y, float[][] vertices) {
         this.vertices = vertices;
