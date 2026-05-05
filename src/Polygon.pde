@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Polygon {
     float[][] vertices, origVertices;
-    float x, y, rot, vx, vy, vrot;
+    float x, y, rot, vx, vy, vrot, rotIne;
     boolean st = false;
     boolean inv = false;
   
