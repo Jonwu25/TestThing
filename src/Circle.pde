@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Circle {
-    float x, y, radius, mass, rotInv;
+    float x, y, radius, mass, rotIne;
     ArrayList<float[]> positions;
     boolean st = false;
     Vector vel;
