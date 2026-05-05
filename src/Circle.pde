@@ -1,10 +1,11 @@
 import java.util.*;
 
 public class Circle {
-    float x, y, radius, mass;
+    float x, y, radius, mass, rotInv;
     ArrayList<float[]> positions;
     boolean st = false;
     Vector vel;
+    boolean inv;
     
     public Circle(float x, float y, float radius, float mass, float vx, float vy, int mode) {
         this.x = x;
