@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Polygon {
     float[][] vertices, origVertices;
-    float x, y, rot, vx, vy, vrot, rotIne;
+    float x, y, rot, vx, vy, vRot, rotIne;
     boolean st = false;
     boolean inv = false;
   
@@ -20,6 +20,17 @@ public class Polygon {
             vertices[i][0] = newX + x;
             vertices[i][1] = newY + y;
         }
+        x += vx;
+        y += vy;
+        rot += vRot;
+    }
+
+    public void display() {
+        beginShape();
+        for (float[] vertex : vertices) {
+            vertex(vertex[0], vertex[1]);
+        }
+        endShape(CLOSE);
     }
     
     public ArrayList<float[]> intersections(Polygon other) {
