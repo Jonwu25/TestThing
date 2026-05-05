@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Polygon {
     float[][] vertices, origVertices;
+    ArrayList<float[]> positions;
     float x, y, rot, vx, vy, vRot, rotIne;
     boolean st = false;
     boolean inv = false;
@@ -11,9 +12,14 @@ public class Polygon {
         this.origVertices = vertices;
         this.x = x;
         this.y = y;
+        positions = new ArrayList<float[]>();
     }
 
     public void update() {
+        positions.add(new float[]{x, y});
+        if (positions.size() > 100) {
+            positions.remove(0);
+        }
         for (int i = 0; i < vertices.length; i++) {
             float newX = origVertices[i][0]*cos(rot) - origVertices[i][1]*sin(rot);
             float newY = origVertices[i][0]*sin(rot) + origVertices[i][1]*cos(rot);
@@ -31,6 +37,13 @@ public class Polygon {
             vertex(vertex[0], vertex[1]);
         }
         endShape(CLOSE);
+        stroke(127);
+        line(x, y, x+10*vel.x, y+10*vel.y);
+        for (int i = 0; i < positions.size() - 1; i++) {
+            stroke(128 + 127 * i / positions.size());
+            line(positions.get(i)[0], positions.get(i)[1], positions.get(i+1)[0], positions.get(i+1)[1]);
+        }
+        stroke(255);
     }
     
     public ArrayList<float[]> intersections(Polygon other) {
