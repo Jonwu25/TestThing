@@ -3,9 +3,9 @@ import java.util.*;
 public class Circle {
     float x, y, rot, radius, mass, rotIne, vRot;
     ArrayList<float[]> positions;
-    boolean st = false;
+    boolean st = false, rotSt = false;
     Vector vel;
-    boolean inv;
+    boolean inv; // inverted
     
     public Circle(float x, float y, float radius, float mass, float vx, float vy, int mode) {
         this.x = x;

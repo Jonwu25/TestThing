@@ -10,7 +10,7 @@ public class CollisionHandler {
         this.polygons = polygons;
     }
 
-    public void handleCollisions() {
+    /*public void handleCollisions() {
         ArrayList<Vector> newVel = new ArrayList<Vector>();
         ArrayList<Vector> displacement = new ArrayList<Vector>();
 
@@ -73,6 +73,31 @@ public class CollisionHandler {
             circles.get(i).vel = newVel.get(i);
             circles.get(i).x += displacement.get(i).x;
             circles.get(i).y += displacement.get(i).y;
+        }
+    }*/
+    
+    public void handleCollisions() {
+        ArrayList<Vector> newVel = new ArrayList<>();
+        ArrayList<Float> newAngRot = new ArrayList<>();
+        
+        // Between circles
+        
+        for (int i = 0; i < circles.size(); i++) {
+            for (int j = 0; j < circles.size(); j++) {
+                if (i == j) {
+                    continue;
+                }
+                ArrayList<float[]> intersections = circles.get(i).circleIntersection(circles.get(j));
+                if (intersections.size() == 0) {
+                    continue;
+                }
+                float[] intersection = new float[2];
+                for (int k = 0; k < intersections.size(); k++) {
+                    intersection[0] += intersections.get(k)[0]/intersections.size();
+                    intersection[1] += intersections.get(k)[1]/intersections.size();
+                }
+                // float impulse = -(1+
+            }
         }
     }
 

@@ -24,7 +24,7 @@ void setup() {
     //circles.add(e);
     //circles.add(f);
     //circles.add(g);
-    c = new CollisionHandler(circles);
+    c = new CollisionHandler(circles, new ArrayList<>());
 }
 
 void draw() {
