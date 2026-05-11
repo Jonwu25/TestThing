@@ -104,7 +104,8 @@ public class CollisionHandler {
     
     public Vector nor(Polygon p, Polygon q) {
         // Returns normal vector of collision
-        
+
+        // Should probably change
         ArrayList<Vector> possibleAxis = new ArrayList<>();
         
         for (int i = 0; i < p.vertices.length; i++) {
@@ -129,22 +130,49 @@ public class CollisionHandler {
                 minIntersect = s;
             }
         }
-        return new Vector(1, minInter.direction+1, 1);
+        return new Vector(1, minInter.direction+PI/2, 1);
     }
     
     public Vector nor(Polygon p, Circle c) {
-        ArrayList<Float> edgeDist = new ArrayList<>();
-        ArrayList<Float> vertDist = new ArrayList<>();
-        
-        
+        float edgeMin = MAX_VALUE;
+        float edgeI = -1;
+        float vertMin = MAX_VALUE;
+        float vertI = -1;
+
         for (int i = 0; i < p.vertices.length; i++) {
             // (x-a[0])/(b[0]-a[0])+(y-a[1])/(b[1]-a[1])=0
             float[] a = p.vertices[i];
             float[] b = p.vertices[(i+1)%p.vertices.length];
-            float dist = abs((c.x-a[0])/(b[0]-a[0])+(c.y-a[1])/(b[1]-a[1]))/sqrt(pow(1/(b[0]-a[0]), 2)+pow(1/(b[1]-a[1]), 2));
-            edgeDist.add(dist);
+            float d = p.project(new Vector(a, b), new float[]{c.x-a.x, c.y-a.y});
+            float dist;
+            if (0 <= d && d <= 1) {
+                dist = abs((c.x-a[0])/(b[0]-a[0])+(c.y-a[1])/(b[1]-a[1]))/sqrt(pow(1/(b[0]-a[0]), 2)+pow(1/(b[1]-a[1]), 2));
+            } else if (d < 0) {
+                dist = sqrt(pow(c.x-a.x, 2)+pow(c.y-a.y, 2));
+            } else {
+                dist = sqrt(pow(c.x-b.x, 2)+pow(c.y-b.y, 2));
+            }
+            if (dist < edgeMin) {
+                edgeMin = dist;
+                edgeI = i;
+            }
         }
-        return null;
+
+        for (int i = 0; i < p.vertices.length; i++) {
+            float[] a = p.vertices[i];
+            float dist = sqrt(pow(c.x-a.x, 2)+pow(c.y-a.y, 2));
+            if (dist < vertMin) {
+                vertMin = dist;
+                vertI = i;
+            }
+        }
+
+        if (vertMin <= edgeMin) {
+            Vector v = new Vector(new float[]{v.x, v.y}, p.vertices[vertI]);
+            return v.multiply(1/v.size);
+        } else {
+            return new Vector(p.vertices[edgeI], p.vertices[(edgeI+1)%p.vertices.length]);
+        }
     }
 
     public void update() {
