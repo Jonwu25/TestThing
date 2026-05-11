@@ -91,14 +91,60 @@ public class CollisionHandler {
                 if (intersections.size() == 0) {
                     continue;
                 }
+                Vector normal;
                 float[] intersection = new float[2];
                 for (int k = 0; k < intersections.size(); k++) {
                     intersection[0] += intersections.get(k)[0]/intersections.size();
                     intersection[1] += intersections.get(k)[1]/intersections.size();
                 }
-                // float impulse = -(1+
+                // float impulse = -(1+elasticity)
             }
         }
+    }
+    
+    public Vector nor(Polygon p, Polygon q) {
+        // Returns normal vector of collision
+        
+        ArrayList<Vector> possibleAxis = new ArrayList<>();
+        
+        for (int i = 0; i < p.vertices.length; i++) {
+            possibleAxis.add(new Vector(p.vertices[i], p.vertices[(i+1)%p.vertices.length]));
+        }
+        for (int i = 0; i < q.vertices.length; i++) {
+            possibleAxis.add(new Vector(q.vertices[i], q.vertices[(i+1)%q.vertices.length]));
+        }
+        for (int i = 0; i < possibleAxis.size(); i++) {
+            Vector v = possibleAxis.get(i);
+            possibleAxis.set(i, new Vector(1, v.direction + PI/2, 1));
+        }
+        
+        float minIntersect = MAX_FLOAT;
+        Vector minInter = new Vector(0, 0, 0);
+        
+        for (Vector v : possibleAxis) {
+            float[] intersect = p.intersection(p.project(v), q.project(v));
+            float s = intersect[1] - intersect[0];
+            if (s < minIntersect) {
+                minInter = v;
+                minIntersect = s;
+            }
+        }
+        return new Vector(1, minInter.direction+1, 1);
+    }
+    
+    public Vector nor(Polygon p, Circle c) {
+        ArrayList<Float> edgeDist = new ArrayList<>();
+        ArrayList<Float> vertDist = new ArrayList<>();
+        
+        
+        for (int i = 0; i < p.vertices.length; i++) {
+            // (x-a[0])/(b[0]-a[0])+(y-a[1])/(b[1]-a[1])=0
+            float[] a = p.vertices[i];
+            float[] b = p.vertices[(i+1)%p.vertices.length];
+            float dist = abs((c.x-a[0])/(b[0]-a[0])+(c.y-a[1])/(b[1]-a[1]))/sqrt(pow(1/(b[0]-a[0]), 2)+pow(1/(b[1]-a[1]), 2));
+            edgeDist.add(dist);
+        }
+        return null;
     }
 
     public void update() {

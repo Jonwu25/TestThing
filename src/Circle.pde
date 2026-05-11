@@ -81,4 +81,15 @@ public class Circle {
     public boolean checkTouch(Circle other) {
         return (sqrt(pow(this.x - other.x, 2) + pow(this.y - other.y, 2)) < this.radius + other.radius);
     }
+    
+    public float[] project(Vector v) {
+        float center = project(v.multiply(1/v.size), new float[]{x, y});
+        return new float[]{center - radius, center + radius};
+    }
+    
+    public float project(Vector v, float[] point) {
+        // v.x*a - v.y*b = point[0]
+        // v.y*a + v.x*b = point[1]
+        return (point[0] * v.x + point[1] * v.y) / (v.x * v.x + v.y * v.y);
+    }
 }

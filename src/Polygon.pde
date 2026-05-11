@@ -144,7 +144,7 @@ public class Polygon {
                p[1] <= max(start[1], end[1]) && p[1] >= min(start[1], end[1]);
     }
     
-    public boolean intersects(Polygon other) {
+    public boolean normal(Polygon other) {
         ArrayList<Vector> possibleAxis = new ArrayList<>();
         for (int i = 0; i < vertices.length; i++) {
             possibleAxis.add(new Vector(vertices[(i+1) % vertices.length][0] - vertices[i][0],
@@ -210,6 +210,36 @@ public class Polygon {
             }
             return intersections;
         }
+    }
+    
+    public float[] intersection(float[] firstInterval, float[] secondInterval) {
+        if (firstInterval[1] < secondInterval[0]) {
+            return null; // if doesn't intersect
+        }
+        if (firstInterval[0] > secondInterval[1]) {
+            return null; // if doesn't intersect
+        }
+        if (firstInterval[0] < secondInterval[0]) {
+            if (firstInterval[1] < secondInterval[1]) {
+                return new float[]{secondInterval[0], firstInterval[1]};
+            } else {
+                return new float[]{secondInterval[0], secondInterval[0]};
+            }
+        } else {
+            if (firstInterval[1] < secondInterval[1]) {
+                return new float[]{firstInterval[0], firstInterval[1]};
+            } else {
+                return new float[]{firstInterval[0], secondInterval[0]};
+            }
+        }
+    }
+    
+    public float[] project(Vector v) {
+        ArrayList<Float> projs = new ArrayList<>();
+        for (float[] vert : vertices) {
+            projs.add(project(v.multiply(1/v.size), vert));
+        }
+        return new float[]{Collections.min(projs), Collections.max(projs)};
     }
     
     public float project(Vector v, float[] point) {
