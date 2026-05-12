@@ -105,9 +105,13 @@ public class Polygon {
             }
         }
         if (inside(other.vertices[0])) {
-            intersections.addAll(Arrays.asList(other.vertices));
+            if (!other.inv) {
+                intersections.addAll(Arrays.asList(other.vertices));
+            }
         } else if (other.inside(vertices[0])) {
-            intersections.addAll(Arrays.asList(vertices));
+            if (!inv) {
+                intersections.addAll(Arrays.asList(vertices));
+            }
         } else {
             // no intersections
         }
@@ -181,6 +185,9 @@ public class Polygon {
             float[] start = vertices[i];
             float[] end = vertices[(i+1) % vertices.length];
             intersections.addAll(lineCircleIntersection(start, end, c));
+        }
+        if (!inv && intersections.size() == 0 && inside(new float[]{c.x, c.y})) {
+            intersections.add(new float[]{c.x, c.y});
         }
         return intersections;
     }
