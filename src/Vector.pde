@@ -68,4 +68,8 @@ public class Vector{
     public float cross(Vector v) {
         return this.x*v.y - this.y*v.x;
     }
+    
+    public float dot(Vector v) {
+        return this.x*v.x + this.y*v.y;
+    }
 }
