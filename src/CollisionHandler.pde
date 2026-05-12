@@ -179,6 +179,11 @@ public class CollisionHandler {
             return new Vector(p.vertices[edgeI], p.vertices[(edgeI+1)%p.vertices.length]);
         }
     }
+    
+    public Vector nor(Circle c, Circle d) {
+        Vector v = new Vector(c.x-d.x, c.y-d.y, 0);
+        return new Vector(1, v.direction+PI/2, 1);
+    }
 
     public void update() {
         for (Circle c : circles) {
