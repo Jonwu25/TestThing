@@ -3,7 +3,7 @@ import java.util.*;
 public class Polygon {
     float[][] vertices, origVertices;
     ArrayList<float[]> positions;
-    float x, y, rot, vx, vy, vRot, rotIne;
+    float x, y, rot, vx, vy, vRot, rotIne, mass;
     boolean st = false, rotSt = false;
     boolean inv = false;
   
