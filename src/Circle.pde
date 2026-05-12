@@ -1,10 +1,9 @@
 import java.util.*;
 
 public class Circle {
-    float x, y, rot, radius, mass, rotIne, vRot;
+    float x, y, rot, radius, mass, rotIne, vRot, vx, vy;
     ArrayList<float[]> positions;
     boolean st = false, rotSt = false;
-    Vector vel;
     boolean inv; // inverted
     
     public Circle(float x, float y, float radius, float mass, float vx, float vy, int mode) {
@@ -13,7 +12,8 @@ public class Circle {
         this.radius = radius;
         this.mass = mass;
         positions = new ArrayList<float[]>();
-        vel = new Vector(vx, vy, mode);
+        this.vx = vx;
+        this.vy = vy;
     }
     
     public Circle deepCopy() {
@@ -26,12 +26,12 @@ public class Circle {
         if (positions.size() > 100) {
             positions.remove(0);
         }
-        x+=vel.x;
-        y+=vel.y;
+        x+=vx;
+        y+=vy;
         for (Circle c : circles) {
             if (!samePos(c)) {
                 Vector v = new Vector(c.x - x, c.y - y, 0);
-                vel = vel.add(v.multiply(pow(v.size, -3)).multiply(Main.G*c.mass));
+                // vel = vel.add(v.multiply(pow(v.size, -3)).multiply(Main.G*c.mass));
             }
         }
     }
@@ -62,7 +62,7 @@ public class Circle {
         ellipseMode(RADIUS);
         circle(x, y, radius);
         stroke(127);
-        line(x, y, x+10*vel.x, y+10*vel.y);
+        //line(x, y, x+10*vel.x, y+10*vel.y);
         for (int i = 0; i < positions.size() - 1; i++) {
             stroke(128 + 127 * i / positions.size());
             line(positions.get(i)[0], positions.get(i)[1], positions.get(i+1)[0], positions.get(i+1)[1]);
