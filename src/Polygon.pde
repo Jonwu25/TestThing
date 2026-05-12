@@ -38,7 +38,6 @@ public class Polygon {
         }
         endShape(CLOSE);
         stroke(127);
-        line(x, y, x+10*vel.x, y+10*vel.y);
         for (int i = 0; i < positions.size() - 1; i++) {
             stroke(128 + 127 * i / positions.size());
             line(positions.get(i)[0], positions.get(i)[1], positions.get(i+1)[0], positions.get(i+1)[1]);
@@ -106,9 +105,9 @@ public class Polygon {
             }
         }
         if (inside(other.vertices[0])) {
-            intersections.add(other.vertices[0]);
+            intersections.addAll(Arrays.asList(other.vertices));
         } else if (other.inside(vertices[0])) {
-            intersections.add(vertices[0]);
+            intersections.addAll(Arrays.asList(vertices));
         } else {
             // no intersections
         }

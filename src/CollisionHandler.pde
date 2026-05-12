@@ -91,6 +91,11 @@ public class CollisionHandler {
                 if (intersections.size() == 0) {
                     continue;
                 }
+                float[][] intersectionsArray = new float[intersections.size()][2];
+                for (int k = 0; k < intersections.size(); k++) {
+                    intersectionsArray[k] = intersections.get(k);
+                }
+                Polygon intersectionPoly = new Polygon(0, 0, intersectionsArray);
                 Vector normal;
                 float[] intersection = new float[2];
                 for (int k = 0; k < intersections.size(); k++) {
@@ -102,17 +107,17 @@ public class CollisionHandler {
         }
     }
     
-    public Vector nor(Polygon p, Polygon q) {
+    public Vector nor(Polygon p) {
         // Returns normal vector of collision
-
+        
+        // r is polygon of collision
+        
         // Should probably change
         ArrayList<Vector> possibleAxis = new ArrayList<>();
         
         for (int i = 0; i < p.vertices.length; i++) {
-            possibleAxis.add(new Vector(p.vertices[i], p.vertices[(i+1)%p.vertices.length]));
-        }
-        for (int i = 0; i < q.vertices.length; i++) {
-            possibleAxis.add(new Vector(q.vertices[i], q.vertices[(i+1)%q.vertices.length]));
+            float[] a = p.vertices[i];
+            float[] b = p.vertices[(i+1)%p.vertices.length];
         }
         for (int i = 0; i < possibleAxis.size(); i++) {
             Vector v = possibleAxis.get(i);
@@ -123,34 +128,34 @@ public class CollisionHandler {
         Vector minInter = new Vector(0, 0, 0);
         
         for (Vector v : possibleAxis) {
-            float[] intersect = p.intersection(p.project(v), q.project(v));
+            float[] intersect = p.project(v);
             float s = intersect[1] - intersect[0];
             if (s < minIntersect) {
                 minInter = v;
                 minIntersect = s;
             }
         }
-        return new Vector(1, minInter.direction+PI/2, 1);
+        return new Vector(1, minInter.direction, 1);
     }
     
     public Vector nor(Polygon p, Circle c) {
-        float edgeMin = MAX_VALUE;
-        float edgeI = -1;
-        float vertMin = MAX_VALUE;
-        float vertI = -1;
+        float edgeMin = MAX_FLOAT;
+        int edgeI = -1;
+        float vertMin = MAX_FLOAT;
+        int vertI = -1;
 
         for (int i = 0; i < p.vertices.length; i++) {
             // (x-a[0])/(b[0]-a[0])+(y-a[1])/(b[1]-a[1])=0
             float[] a = p.vertices[i];
             float[] b = p.vertices[(i+1)%p.vertices.length];
-            float d = p.project(new Vector(a, b), new float[]{c.x-a.x, c.y-a.y});
+            float d = p.project(new Vector(a, b), new float[]{c.x-a[0], c.y-a[1]});
             float dist;
             if (0 <= d && d <= 1) {
                 dist = abs((c.x-a[0])/(b[0]-a[0])+(c.y-a[1])/(b[1]-a[1]))/sqrt(pow(1/(b[0]-a[0]), 2)+pow(1/(b[1]-a[1]), 2));
             } else if (d < 0) {
-                dist = sqrt(pow(c.x-a.x, 2)+pow(c.y-a.y, 2));
+                dist = sqrt(pow(c.x-a[0], 2)+pow(c.y-a[1], 2));
             } else {
-                dist = sqrt(pow(c.x-b.x, 2)+pow(c.y-b.y, 2));
+                dist = sqrt(pow(c.x-b[0], 2)+pow(c.y-b[1], 2));
             }
             if (dist < edgeMin) {
                 edgeMin = dist;
@@ -160,7 +165,7 @@ public class CollisionHandler {
 
         for (int i = 0; i < p.vertices.length; i++) {
             float[] a = p.vertices[i];
-            float dist = sqrt(pow(c.x-a.x, 2)+pow(c.y-a.y, 2));
+            float dist = sqrt(pow(c.x-a[0], 2)+pow(c.y-a[1], 2));
             if (dist < vertMin) {
                 vertMin = dist;
                 vertI = i;
@@ -168,7 +173,7 @@ public class CollisionHandler {
         }
 
         if (vertMin <= edgeMin) {
-            Vector v = new Vector(new float[]{v.x, v.y}, p.vertices[vertI]);
+            Vector v = new Vector(new float[]{c.x, c.y}, p.vertices[vertI]);
             return v.multiply(1/v.size);
         } else {
             return new Vector(p.vertices[edgeI], p.vertices[(edgeI+1)%p.vertices.length]);
