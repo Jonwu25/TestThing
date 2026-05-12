@@ -80,29 +80,35 @@ public class CollisionHandler {
         ArrayList<Vector> newVel = new ArrayList<>();
         ArrayList<Float> newAngRot = new ArrayList<>();
         
-        // Between circles
+        // Between Polygons
         
-        for (int i = 0; i < circles.size(); i++) {
-            for (int j = 0; j < circles.size(); j++) {
+        for (int i = 0; i < polygons.size(); i++) {
+            for (int j = 0; j < polygons.size(); j++) {
                 if (i == j) {
                     continue;
                 }
-                ArrayList<float[]> intersections = circles.get(i).circleIntersection(circles.get(j));
+                ArrayList<float[]> intersections = circles.get(i).circleIntersection(polygons.get(j));
                 if (intersections.size() == 0) {
                     continue;
                 }
+                Polygon p = polygons.get(i);
+                Polygon q = polygons.get(j);
+                // Update p
                 float[][] intersectionsArray = new float[intersections.size()][2];
                 for (int k = 0; k < intersections.size(); k++) {
                     intersectionsArray[k] = intersections.get(k);
                 }
                 Polygon intersectionPoly = new Polygon(0, 0, intersectionsArray);
-                Vector normal;
+                Vector normal = p.nor(intersectionPoly);
                 float[] intersection = new float[2];
                 for (int k = 0; k < intersections.size(); k++) {
                     intersection[0] += intersections.get(k)[0]/intersections.size();
                     intersection[1] += intersections.get(k)[1]/intersections.size();
                 }
-                // float impulse = -(1+elasticity)
+                Vector v = new Vector(new float[]{p.x, p.y}, intersection);
+                v = new Vector(v.size*p.vRot, v.direction + PI/2, 1);
+                v = v.add(new Vector(p.vx, p.vy, 0));
+                float impulse = -(1+elasticity)*v.dot(normal);
             }
         }
     }
