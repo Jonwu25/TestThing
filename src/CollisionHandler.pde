@@ -90,8 +90,8 @@ public class CollisionHandler {
 
         for (int i = 0; i < circles.size(); i++) {
             Circle c = circles.get(i);
-            newCirVel.add(new Vector(c.vx, c.vy, 0));
-            newCirAngRot.add(c.vRot);
+            newCircVel.add(new Vector(c.vx, c.vy, 0));
+            newCircAngRot.add(c.vRot);
         }
         
         // Between Polygons
@@ -121,10 +121,13 @@ public class CollisionHandler {
                     intersection[0] += intersections.get(k)[0]/intersections.size();
                     intersection[1] += intersections.get(k)[1]/intersections.size();
                 }
-                Vector v = new Vector(new float[]{p.x, p.y}, intersection);
-                v = new Vector(v.size*p.vRot, v.direction + PI/2, 1);
-                v = v.add(new Vector(p.vx, p.vy, 0));
-                float impulse = -(1+elasticity)*v.dot(normal);
+                Vector pv = new Vector(new float[]{p.x, p.y}, intersection);
+                pv = new Vector(pv.size*p.vRot, pv.direction + PI/2, 1);
+                pv = pv.add(new Vector(p.vx, p.vy, 0));
+                Vector qv = new Vector(new float[]{q.x, q.y}, intersection);
+                qv = new Vector(qv.size*q.vRot, qv.direction + PI/2, 1);
+                qv = qv.add(new Vector(q.vx, q.vy, 0));
+                float impulse = -(1+elasticity)*pv.subtract(qv).dot(normal);
                 float denom = 0;
                 if (!p.st) {
                     denom += 1/p.mass;
@@ -134,11 +137,11 @@ public class CollisionHandler {
                 }
                 if (!p.rotSt) {
                     Vector r = new Vector(new float[]{p.x, p.y}, intersection);
-                    denom += r.cross(normal).multiply(1/p.rotIne);
+                    denom += pow(r.cross(normal), 2)/p.rotIne;
                 }
                 if (!q.rotSt) {
                     Vector r = new Vector(new float[]{q.x, q.y}, intersection);
-                    denom += r.cross(normal).multiply(1/q.rotIne);
+                    denom += pow(r.cross(normal), 2)/q.rotIne;
                 }
                 if (denom == 0) {
                     continue;
@@ -166,27 +169,26 @@ public class CollisionHandler {
                 if (i == j) {
                     continue;
                 }
-                ArrayList<float[]> intersections = circles.get(i).circleIntersection(polygons.get(j));
+                ArrayList<float[]> intersections = circles.get(i).circleIntersection(circles.get(j));
                 if (intersections.size() == 0) {
                     continue;
                 }
-                Polygon c = circles.get(i);
-                Polygon d = circles.get(j);
+                Circle c = circles.get(i);
+                Circle d = circles.get(j);
                 // Update c
-                float[][] intersectionsArray = new float[intersections.size()][2];
-                for (int k = 0; k < intersections.size(); k++) {
-                    intersectionsArray[k] = intersections.get(k);
-                }
                 Vector normal = nor(c, d);
                 float[] intersection = new float[2];
                 for (int k = 0; k < intersections.size(); k++) {
                     intersection[0] += intersections.get(k)[0]/intersections.size();
                     intersection[1] += intersections.get(k)[1]/intersections.size();
                 }
-                Vector v = new Vector(new float[]{c.x, c.y}, intersection);
-                v = new Vector(v.size*c.vRot, v.direction + PI/2, 1);
-                v = v.add(new Vector(p.vx, p.vy, 0));
-                float impulse = -(1+elasticity)*v.dot(normal);
+                Vector cv = new Vector(new float[]{c.x, c.y}, intersection);
+                cv = new Vector(cv.size*c.vRot, cv.direction + PI/2, 1);
+                cv = cv.add(new Vector(c.vx, c.vy, 0));
+                Vector dv = new Vector(new float[]{d.x, d.y}, intersection);
+                dv = new Vector(dv.size*d.vRot, dv.direction + PI/2, 1);
+                dv = dv.add(new Vector(d.vx, d.vy, 0));
+                float impulse = -(1+elasticity)*(cv.subtract(dv)).dot(normal);
                 float denom = 0;
                 if (!c.st) {
                     denom += 1/c.mass;
@@ -196,11 +198,11 @@ public class CollisionHandler {
                 }
                 if (!c.rotSt) {
                     Vector r = new Vector(new float[]{c.x, c.y}, intersection);
-                    denom += r.cross(normal).multiply(1/c.rotIne);
+                    denom += pow(r.cross(normal), 2)/c.rotIne;
                 }
                 if (!d.rotSt) {
                     Vector r = new Vector(new float[]{d.x, d.y}, intersection);
-                    denom += r.cross(normal).multiply(1/d.rotIne);
+                    denom += pow(r.cross(normal), 2)/d.rotIne;
                 }
                 if (denom == 0) {
                     continue;
@@ -215,13 +217,92 @@ public class CollisionHandler {
                     dRot+=r.cross(impu)/c.rotIne;
                 }
             }
-            newCircVel.set(i, newPolyVel.get(i).add(dVel));
-            newCircAngRot.set(i, newPolyAngRot.get(i)+dRot);
+            newCircVel.set(i, newCircVel.get(i).add(dVel));
+            newCircAngRot.set(i, newCircAngRot.get(i)+dRot);
         }
 
         // Circle and Polygon
 
-        // Not implemented yet
+        for (int i = 0; i < polygons.size(); i++) {
+            for (int j = 0; j < circles.size(); j++) {
+                Polygon p = polygons.get(i);
+                Circle c = circles.get(j);
+                ArrayList<float[]> intersections = p.polygonCircleIntersection(c);
+                if (intersections.size() == 0) {
+                    continue;
+                }
+                // Update both
+                Vector normal = nor(p, c);
+                float[] intersection = new float[2];
+                for (int k = 0; k < intersections.size(); k++) {
+                    intersection[0] += intersections.get(k)[0]/intersections.size();
+                    intersection[1] += intersections.get(k)[1]/intersections.size();
+                }
+                Vector pv = new Vector(new float[]{p.x, p.y}, intersection);
+                pv = new Vector(pv.size*p.vRot, pv.direction + PI/2, 1);
+                pv = pv.add(new Vector(p.vx, p.vy, 0));
+                Vector cv = new Vector(new float[]{c.x, c.y}, intersection);
+                cv = new Vector(cv.size*c.vRot, cv.direction + PI/2, 1);
+                cv = cv.add(new Vector(c.vx, c.vy, 0));
+                float impulse = -(1+elasticity)*pv.subtract(cv).dot(normal);
+                float denom = 0;
+                if (!p.st) {
+                    denom += 1/p.mass;
+                }
+                if (!c.st) {
+                    denom += 1/c.mass;
+                }
+                if (!p.rotSt) {
+                    Vector r = new Vector(new float[]{p.x, p.y}, intersection);
+                    denom += pow(r.cross(normal), 2)/c.rotIne;
+                }
+                if (!c.rotSt) {
+                    Vector r = new Vector(new float[]{c.x, c.y}, intersection);
+                    denom += pow(r.cross(normal), 2)/c.rotIne;
+                }
+                if (denom == 0) {
+                    continue;
+                }
+                println(denom);
+                impulse /= denom;
+                Vector impu = normal.multiply(impulse);
+                //println(impulse);
+                Vector dVelP = new Vector(0, 0, 0);
+                float dRotP = 0;
+                Vector dVelC = new Vector(0, 0, 0);
+                float dRotC = 0;
+                if (!p.st) {
+                    dVelP.add(impu.multiply(1/p.mass));
+                }
+                if (!p.rotSt) {
+                    Vector r = new Vector(new float[]{p.x, p.y}, intersection);
+                    dRotP+=r.cross(impu)/p.rotIne;
+                }
+                if (!c.st) {
+                    dVelC.add(impu.multiply(-1/c.mass));
+                }
+                if (!c.rotSt) {
+                    Vector r = new Vector(new float[]{c.x, c.y}, intersection);
+                    dRotC+=r.cross(impu.multiply(-1))/c.rotIne;
+                }
+                newPolyVel.set(i, newPolyVel.get(i).add(dVelP));
+                newPolyAngRot.set(i, newPolyAngRot.get(i)+dRotP);
+                newCircVel.set(j, newPolyVel.get(j).add(dVelC));
+                newCircAngRot.set(j, newPolyAngRot.get(j)+dRotC);
+            }
+        }
+        
+        for (int i = 0; i < polygons.size(); i++) {
+            polygons.get(i).vx = newPolyVel.get(i).x;
+            polygons.get(i).vy = newPolyVel.get(i).y;
+            polygons.get(i).vRot = newPolyAngRot.get(i);
+        }
+        
+        for (int i = 0; i < circles.size(); i++) {
+            circles.get(i).vx = newCircVel.get(i).x;
+            circles.get(i).vy = newCircVel.get(i).y;
+            circles.get(i).vRot = newCircAngRot.get(i);
+        }
     }
     
     public Vector nor(Polygon p) {
@@ -252,7 +333,7 @@ public class CollisionHandler {
                 minIntersect = s;
             }
         }
-        return new Vector(1, minInter.direction, 1);
+        return new Vector(1, minInter.direction+PI/2, 1);
     }
     
     public Vector nor(Polygon p, Circle c) {
@@ -291,15 +372,16 @@ public class CollisionHandler {
 
         if (vertMin <= edgeMin) {
             Vector v = new Vector(new float[]{c.x, c.y}, p.vertices[vertI]);
-            return v.multiply(1/v.size);
+            return new Vector(1, v.direction+PI/2, 1);
         } else {
-            return new Vector(p.vertices[edgeI], p.vertices[(edgeI+1)%p.vertices.length]);
+            Vector v = new Vector(p.vertices[edgeI], p.vertices[(edgeI+1)%p.vertices.length]);
+            return new Vector(1, v.direction+PI/2, 1);
         }
     }
     
     public Vector nor(Circle c, Circle d) {
         Vector v = new Vector(c.x-d.x, c.y-d.y, 0);
-        return new Vector(1, v.direction+PI/2, 1);
+        return new Vector(1, v.direction, 1);
     }
 
     public void update() {

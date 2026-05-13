@@ -185,6 +185,9 @@ public class Polygon {
             float[] start = vertices[i];
             float[] end = vertices[(i+1) % vertices.length];
             intersections.addAll(lineCircleIntersection(start, end, c));
+            if (c.inside(start)) {
+                intersections.add(start);
+            }
         }
         if (!inv && intersections.size() == 0 && inside(new float[]{c.x, c.y})) {
             intersections.add(new float[]{c.x, c.y});

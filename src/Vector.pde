@@ -72,4 +72,8 @@ public class Vector{
     public float dot(Vector v) {
         return this.x*v.x + this.y*v.y;
     }
+    
+    public String toString() {
+        return "("+x+", "+y+")"+", ("+size+", "+direction+")";
+    }
 }

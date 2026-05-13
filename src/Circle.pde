@@ -11,13 +11,14 @@ public class Circle {
         this.y = y;
         this.radius = radius;
         this.mass = mass;
+        this.rotIne = mass;
         positions = new ArrayList<float[]>();
         this.vx = vx;
         this.vy = vy;
     }
     
     public Circle deepCopy() {
-        Circle d = new Circle(x, y, radius, mass, vel.x, vel.y, 0);
+        Circle d = new Circle(x, y, radius, mass, vx, vy, 0);
         return d;
     }
     
@@ -91,5 +92,9 @@ public class Circle {
         // v.x*a - v.y*b = point[0]
         // v.y*a + v.x*b = point[1]
         return (point[0] * v.x + point[1] * v.y) / (v.x * v.x + v.y * v.y);
+    }
+    
+    public boolean inside(float[] point) {
+        return (sqrt(pow(point[0] - x, 2)+pow(point[1] - y, 2)) < radius);
     }
 }
