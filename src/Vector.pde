@@ -1,25 +1,25 @@
 public class Vector{
-    float x, y, size, direction;
-    public Vector(float x, float y, int mode) {
+    double x, y, size, direction;
+    public Vector(double x, double y, int mode) {
         if (mode == 0) {
             this.x = x;
             this.y = y;
-            this.size = sqrt(pow(x, 2) + pow(y, 2));
+            this.size = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
             if (x == 0 && y == 0) {
                 this.direction = 0;
             } else {
-                this.direction = atan2(y, x);
+                this.direction = Math.atan2(y, x);
             }
         }
         if (mode == 1) {
             this.size = x;
             this.direction = y;
-            this.x = x*cos(y);
-            this.y = x*sin(y);
+            this.x = x*Math.cos(y);
+            this.y = x*Math.sin(y);
         }
     }
 
-    public Vector(float[] s, float[] e) {
+    public Vector(double[] s, double[] e) {
         Vector t = new Vector(e[0]-s[0], e[1]-s[1], 0);
         x = t.x;
         y = t.y;
@@ -31,12 +31,12 @@ public class Vector{
         return new Vector(x, y, 0);
     }
     
-    public float[] standard() {
-        return new float[]{this.x, this.y};
+    public double[] standard() {
+        return new double[]{this.x, this.y};
     }
     
-    public float[] rotation() {
-        return new float[]{sqrt(pow(this.x, 2) + pow(this.y, 2)), atan2(this.y, this.x)};
+    public double[] rotation() {
+        return new double[]{Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2)), Math.atan2(this.y, this.x)};
     }
     
     public Vector add(Vector other) {
@@ -47,7 +47,7 @@ public class Vector{
         return new Vector(this.x - other.x, this.y - other.y, 0);
     }
     
-    public Vector multiply(float scalar) {
+    public Vector multiply(double scalar) {
         return new Vector(scalar*x, scalar*y, 0);
     }
     
@@ -57,19 +57,19 @@ public class Vector{
         return v.multiply(0.9);
     }
     
-    public void display(float x, float y) {
-        line(x, y, x+this.x, y+this.y);
+    public void display(double x, double y) {
+        line((float)x, (float)y, (float)(x+this.x), (float)(y+this.y));
     }
 
-    public float angle(Vector v) {
+    public double angle(Vector v) {
         return (v.direction-direction+2*PI)%(2*PI);
     }
 
-    public float cross(Vector v) {
+    public double cross(Vector v) {
         return this.x*v.y - this.y*v.x;
     }
     
-    public float dot(Vector v) {
+    public double dot(Vector v) {
         return this.x*v.x + this.y*v.y;
     }
     
