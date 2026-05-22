@@ -339,13 +339,15 @@ class CollisionHandler {
         }
     }
     
-    public Vector nor(Polygon p, Polygon q, int cond) {
+    public Vector nor(Polygon p, Polygon q, Polygon r, int cond) {
         // Returns normal vector of collision
         
         // p is polygon normal vector is acting on
         // q is polygon of collision
+        // r is intersecting polygon
         
         // Should probably change
+        // Use r instead
         ArrayList<Vector> possibleAxis = new ArrayList<>();
 
         // Add edge normals from both polygons as potential separating axes
