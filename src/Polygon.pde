@@ -3,16 +3,30 @@ import java.util.*;
 class Polygon extends Shape {
     double[][] vertices, origVertices;
     ArrayList<double[]> positions;
-    double x, y, rot, vx, vy, vRot, rotIne, mass;
+    double x, y, ax, ay, rot, vx, vy, vRot, rotIne, mass;
     boolean st = false, rotSt = false;
     boolean inv = false;
   
     public Polygon(double x, double y, double[][] vertices) {
         this.vertices = vertices;
-        this.origVertices = vertices;
+        this.origVertices = new double[vertices.length][2];
+        for (int i = 0; i < vertices.length; i++) {
+            this.origVertices[i][0] = vertices[i][0];
+            this.origVertices[i][1] = vertices[i][1];
+        }
         this.x = x;
         this.y = y;
         positions = new ArrayList<double[]>();
+        this.ax = 0;
+        this.ay = 0;
+        for (double[] vert : vertices) {
+            ax += vert[0];
+            ay += vert[1];
+        }
+        this.ax /= vertices.length;
+        this.ay /= vertices.length;
+        ax += x;
+        ay += y;
     }
 
     public void update() {
@@ -29,6 +43,14 @@ class Polygon extends Shape {
         x += vx;
         y += vy;
         rot += vRot;
+        ax = 0;
+        ay = 0;
+        for (double[] vert : vertices) {
+            ax += vert[0];
+            ay += vert[1];
+        }
+        ax /= vertices.length;
+        ay /= vertices.length;
     }
 
     public void display() {
@@ -47,29 +69,35 @@ class Polygon extends Shape {
         stroke(255);
     }
     
-    public ArrayList<double[]> intersections(Polygon other) {
+    public ArrayList<double[]> intersections(Polygon other, int cond) {
         // From O'Rourke
+        // cond: 0 for normal, 1 for this in other, 2 for other in this
         int startOne = 0;
         int startTwo = 0;
         int[] inside = null; // will be 2 numbers, 0/1 for which polygon, and index of vertex
         ArrayList<double[]> intersections = new ArrayList<>();
+        double[] lastIntersection = null;
         for (int i = 0; i < 2*(vertices.length + other.vertices.length); i++) {
             if (checkIntersect(vertices[startOne], vertices[(startOne-1+vertices.length)%vertices.length],
                                other.vertices[startTwo], other.vertices[(startOne-1+other.vertices.length)%other.vertices.length])) {
                 double[] intersectionPoint = intersection(vertices[startOne], vertices[(startOne-1+vertices.length)%vertices.length],
                                                          other.vertices[startTwo], other.vertices[(startOne-1+other.vertices.length)%other.vertices.length]);
-                if (intersections.size() > 0) {
-                    if (intersections.get(0)[0] == intersectionPoint[0] && intersections.get(0)[1] == intersectionPoint[1]) {
-                        return intersections;
+                if (lastIntersection != null && lastIntersection[0] != intersectionPoint[0] && lastIntersection[1] != intersectionPoint[1]) {
+                    if (intersections.size() > 0) {
+                        if (intersections.get(0)[0] == intersectionPoint[0] && intersections.get(0)[1] == intersectionPoint[1]) {
+                            return intersections;
+                        }
+                    } else {
+                        intersections.add(intersectionPoint);
+                        lastIntersection = intersectionPoint;
+                        Vector first = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], other.vertices[startTwo]);
+                        Vector second = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], vertices[startOne]);
+                        if (first.cross(second) >= 0) {
+                            inside = new int[]{0, startOne}; // P
+                        } else {
+                            inside = new int[]{1, startTwo}; // Q
+                        }
                     }
-                }
-                intersections.add(intersectionPoint);
-                Vector first = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], other.vertices[startTwo]);
-                Vector second = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], vertices[startOne]);
-                if (first.cross(second) >= 0) {
-                    inside = new int[]{0, startOne}; // P
-                } else {
-                    inside = new int[]{1, startTwo}; // Q
                 }
             }
             Vector qDot = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], other.vertices[startTwo]);
@@ -81,38 +109,42 @@ class Polygon extends Shape {
                     // advance Q
                     if (inside != null && inside[0] == 1 && inside[1] == startTwo) {
                         intersections.add(other.vertices[startTwo]);
-                        startTwo = (startTwo + 1) % other.vertices.length;
+                        lastIntersection = other.vertices[startTwo];
                     }
+                    startTwo = (startTwo + 1) % other.vertices.length;
                 } else {
                     // advance P
                     if (inside != null && inside[0] == 0 && inside[1] == startOne) {
                         intersections.add(vertices[startOne]);
-                        startOne = (startOne + 1) % vertices.length;
+                        lastIntersection = vertices[startOne];
                     }
+                    startOne = (startOne + 1) % vertices.length;
                 }
             } else {
                 if (pDot.cross(qHalf) >= 0) {
                     // advance P
                     if (inside != null && inside[0] == 0 && inside[1] == startOne) {
                         intersections.add(vertices[startOne]);
-                        startOne = (startOne + 1) % vertices.length;
+                        lastIntersection = vertices[startOne];
                     }
+                    startOne = (startOne + 1) % vertices.length;
                 } else {
                     // advance Q
                     if (inside != null && inside[0] == 1 && inside[1] == startTwo) {
                         intersections.add(other.vertices[startTwo]);
-                        startTwo = (startTwo + 1) % other.vertices.length;
+                        lastIntersection = other.vertices[startTwo];
                     }
+                    startTwo = (startTwo + 1) % other.vertices.length;
                 }
             }
         }
         if (inside(other.vertices[0])) {
-            if (!other.inv) {
-                intersections.addAll(Arrays.asList(other.vertices));
+            if (cond != 1) {
+                intersections.addAll(Arrays.asList(vertices));
             }
         } else if (other.inside(vertices[0])) {
-            if (!inv) {
-                intersections.addAll(Arrays.asList(vertices));
+            if (cond != 2) {
+                intersections.addAll(Arrays.asList(other.vertices));
             }
         } else {
             // no intersections
@@ -121,16 +153,19 @@ class Polygon extends Shape {
     }
 
     public boolean inside(double[] p) {
-        double angle = 0;
         for (int i = 0; i < vertices.length; i++) {
-            Vector vec = new Vector(p, vertices[i]);
-            angle += vec.angle(new Vector(p, vertices[(i+1)%vertices.length]));
+            Vector v1 = new Vector(vertices[i], vertices[(i+1)%vertices.length]);
+            Vector v2 = new Vector(p, vertices[(i+1)%vertices.length]);
+            if (v1.cross(v2) < 0) {
+                return false;
+            }
         }
-        return angle==2*PI;
+        return true;
     }
     
     public boolean checkIntersect(double[] startOne, double[] endOne, double[] startTwo, double[] endTwo) {
-        if(onSegment(intersection(startOne, endOne, startTwo, endTwo), startOne, endOne) && onSegment(intersection(startOne, endOne, startTwo, endTwo), startTwo, endTwo)){
+        double[] intersectPoint = intersection(startOne, endOne, startTwo, endTwo);
+        if (intersectPoint != null && onSegment(intersectPoint, startOne, endOne) && onSegment(intersectPoint, startTwo, endTwo)) {
             return true;
         }
         return false;
@@ -139,6 +174,9 @@ class Polygon extends Shape {
     public double[] intersection(double[] p, double[] q, double[] r, double[] s) {
         // y=(q[1]-p[1])/(q[0]-p[0])(x-p[0])+p[1]
         // y=(s[1]-r[1])/(s[0]-r[0])(x-r[0])+r[1]
+        if ((q[1]-p[1])/(q[0]-p[0]) == (s[1]-r[1])/(s[0]-r[0])) {
+            return null; // if parallel
+        }
         double x = (r[1]-p[1]+(q[1]-p[1])/(q[0]-p[0])*p[0]-(s[1]-r[1])/(s[0]-r[0])*r[0])/((q[1]-p[1])/(q[0]-p[0])-(s[1]-r[1])/(s[0]-r[0]));
         double y = (q[1]-p[1])/(q[0]-p[0])*(x-p[0])+p[1];
         return new double[]{x, y};
@@ -181,7 +219,8 @@ class Polygon extends Shape {
         return true;
     }
 
-    public ArrayList<double[]> polygonCircleIntersection(Circle c) {
+    public ArrayList<double[]> polygonCircleIntersection(Circle c, int cond) {
+        // cond: 0 for normal, 1 for this in other, 2 for other in this
         ArrayList<double[]> intersections = new ArrayList<>();
         for (int i = 0; i < vertices.length; i++) {
             double[] start = vertices[i];
@@ -191,7 +230,10 @@ class Polygon extends Shape {
                 intersections.add(start);
             }
         }
-        if (!inv && intersections.size() == 0 && inside(new double[]{c.x, c.y})) {
+        if (cond != 1 && intersections.size() == 0 && c.inside(new double[]{ax, ay})) {
+            intersections.addAll(Arrays.asList(vertices));
+        }
+        if (cond != 2 && intersections.size() == 0 && inside(new double[]{c.ax, c.ay})) {
             intersections.add(new double[]{c.x, c.y});
         }
         return intersections;
@@ -201,8 +243,8 @@ class Polygon extends Shape {
         double dx = end[0] - start[0];
         double dy = end[1] - start[1];
         double A = dx*dx + dy*dy;
-        double B = 2*(dx*(start[0]-c.x) + dy*(start[1]-c.y));
-        double C = (start[0]-c.x)*(start[0]-c.x) + (start[1]-c.y)*(start[1]-c.y) - c.radius*c.radius;
+        double B = 2*(dx*(start[0]-c.ax) + dy*(start[1]-c.ay));
+        double C = (start[0]-c.ax)*(start[0]-c.ax) + (start[1]-c.ay)*(start[1]-c.ay) - c.radius*c.radius;
         double det = B*B - 4*A*C;
         ArrayList<double[]> intersections = new ArrayList<>();
         if (det < 0) {

@@ -2,6 +2,7 @@ import java.util.*;
 
 class Circle extends Shape {
     double x, y, rot, radius, mass, rotIne, vRot, vx, vy;
+    double ax, ay;
     ArrayList<double[]> positions;
     boolean st = false, rotSt = false;
     boolean inv; // inverted
@@ -9,6 +10,8 @@ class Circle extends Shape {
     public Circle(double x, double y, double radius, double mass, double vx, double vy, int mode) {
         this.x = x;
         this.y = y;
+        this.ax = x;
+        this.ay = y;
         this.radius = radius;
         this.mass = mass;
         this.rotIne = mass;
@@ -29,6 +32,8 @@ class Circle extends Shape {
         }
         x+=vx;
         y+=vy;
+        ax = x;
+        ay = y;
     }
     
     public boolean samePos(Circle other) {
@@ -79,7 +84,7 @@ class Circle extends Shape {
     }
     
     public double[] project(Vector v) {
-        double center = project(v.multiply(1/v.size), new double[]{x, y});
+        double center = project(v.multiply(1/v.size), new double[]{ax, ay});
         return new double[]{center - radius, center + radius};
     }
     
@@ -90,6 +95,6 @@ class Circle extends Shape {
     }
     
     public boolean inside(double[] point) {
-        return (Math.sqrt(Math.pow(point[0] - x, 2)+Math.pow(point[1] - y, 2)) < radius);
+        return (Math.sqrt(Math.pow(point[0] - ax, 2)+Math.pow(point[1] - ay, 2)) < radius);
     }
 }
