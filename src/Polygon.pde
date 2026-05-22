@@ -87,17 +87,16 @@ class Polygon extends Shape {
                         if (intersections.get(0)[0] == intersectionPoint[0] && intersections.get(0)[1] == intersectionPoint[1]) {
                             return intersections;
                         }
-                    } else {
-                        intersections.add(intersectionPoint);
-                        lastIntersection = intersectionPoint;
-                        Vector first = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], other.vertices[startTwo]);
-                        Vector second = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], vertices[startOne]);
-                        if (first.cross(second) >= 0) {
-                            inside = new int[]{0, startOne}; // P
-                        } else {
-                            inside = new int[]{1, startTwo}; // Q
-                        }
                     }
+                }
+                intersections.add(intersectionPoint);
+                lastIntersection = intersectionPoint;
+                Vector first = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], other.vertices[startTwo]);
+                Vector second = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], vertices[startOne]);
+                if (first.cross(second) >= 0) {
+                    inside = new int[]{0, startOne}; // P
+                } else {
+                    inside = new int[]{1, startTwo}; // Q
                 }
             }
             Vector qDot = new Vector(other.vertices[(startTwo-1+other.vertices.length)%other.vertices.length], other.vertices[startTwo]);
