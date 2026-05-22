@@ -105,10 +105,13 @@ class CollisionHandler {
             center[1] += intersections.get(k)[1] / intersections.size();
         }
         Vector normal = nor(s, t, cond);
+        textSize(12);
+        textAlign(LEFT, TOP);
         double[] intersection = new double[2];
         for (int k = 0; k < intersections.size(); k++) {
             intersection[0] += intersections.get(k)[0] / intersections.size();
             intersection[1] += intersections.get(k)[1] / intersections.size();
+            text(intersections.get(k)[0] + " " + intersections.get(k)[1], 0
         }
         Vector sv = new Vector(new double[]{s.x, s.y}, intersection);
         sv = new Vector(sv.size * s.vRot, sv.direction + PI/2, 1);
@@ -123,7 +126,7 @@ class CollisionHandler {
         double impulse = -(1 + elasticity) * relDot;
         textSize(12);
         textAlign(LEFT, TOP);
-        text((float) impulse, 0, 0);
+        //text((float) impulse, 0, 0);
         double denom = 0;
         if (!s.st) {
             denom += 1 / s.mass;
@@ -502,4 +505,3 @@ class CollisionHandler {
         }
     }
 }
-

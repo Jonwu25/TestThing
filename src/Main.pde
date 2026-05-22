@@ -6,11 +6,11 @@ CollisionHandler c;
 float G;
 ArrayList<Circle> circles;
 ArrayList<Polygon> polygons;
+boolean paused;
 
 void setup() {
     size(500, 500);
     surface.setResizable(true);
-    frameRate(30);
     float x = 2;
     G = 10000;
     Circle a = new Circle(250f, 250f, 10f, 1f, 1f, x, 0);
@@ -54,4 +54,15 @@ void draw() {
     loc1.add(0);
     loc1.add(1);
     loc2.add(0);
+}
+
+void keyPressed() {
+    if (key == 'a') {
+        paused = !paused;
+        if (paused) {
+            noLoop();
+        } else {
+            loop();
+        }
+    }
 }
