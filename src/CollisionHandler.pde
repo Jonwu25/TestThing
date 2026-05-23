@@ -104,14 +104,12 @@ class CollisionHandler {
             center[0] += intersections.get(k)[0] / intersections.size();
             center[1] += intersections.get(k)[1] / intersections.size();
         }
-        Vector normal = nor(s, t, cond);
-        textSize(12);
-        textAlign(LEFT, TOP);
+        double[][] verts = intersections.toArray(new double[intersections.size()][2]);
+        Vector normal = nor(s, t, new Polygon(0, 0, verts), cond);
         double[] intersection = new double[2];
         for (int k = 0; k < intersections.size(); k++) {
             intersection[0] += intersections.get(k)[0] / intersections.size();
             intersection[1] += intersections.get(k)[1] / intersections.size();
-            text(intersections.get(k)[0] + " " + intersections.get(k)[1], 0
         }
         Vector sv = new Vector(new double[]{s.x, s.y}, intersection);
         sv = new Vector(sv.size * s.vRot, sv.direction + PI/2, 1);
@@ -124,9 +122,6 @@ class CollisionHandler {
             return res;
         }
         double impulse = -(1 + elasticity) * relDot;
-        textSize(12);
-        textAlign(LEFT, TOP);
-        //text((float) impulse, 0, 0);
         double denom = 0;
         if (!s.st) {
             denom += 1 / s.mass;
@@ -351,14 +346,9 @@ class CollisionHandler {
         ArrayList<Vector> possibleAxis = new ArrayList<>();
 
         // Add edge normals from both polygons as potential separating axes
-        for (int i = 0; i < p.vertices.length; i++) {
-            double[] a = p.vertices[i];
-            double[] b = p.vertices[(i+1) % p.vertices.length];
-            possibleAxis.add(new Vector(a, b));
-        }
-        for (int i = 0; i < q.vertices.length; i++) {
-            double[] a = q.vertices[i];
-            double[] b = q.vertices[(i+1) % q.vertices.length];
+        for (int i = 0; i < r.vertices.length; i++) {
+            double[] a = r.vertices[i];
+            double[] b = r.vertices[(i+1) % r.vertices.length];
             possibleAxis.add(new Vector(a, b));
         }
 
@@ -367,9 +357,8 @@ class CollisionHandler {
 
         for (Vector edge : possibleAxis) {
             Vector axis = new Vector(1, edge.direction + PI/2, 1);
-            double[] intP = p.project(axis);
-            double[] intQ = q.project(axis);
-            double overlap = Math.min(intP[1], intQ[1]) - Math.max(intP[0], intQ[0]);
+            double[] intP = r.project(axis);
+            double overlap = intP[1] - intP[0];
             if (overlap < minIntersect) {
                 minInter = axis;
                 minIntersect = overlap;
